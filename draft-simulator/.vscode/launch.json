@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch Current File",
+            "request": "launch",
+            "args": "--enable-preview",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "App",
+            "args": "--enable-preview",
+            "projectName": "draft-simulator_f04769cb"
+        },
+        {
+            "type": "java",
+            "name": "Launch ClientSide",
+            "request": "launch",
+            "mainClass": "ClientSide",
+            "args": "--enable-preview",
+            "projectName": "draft-simulator_f04769cb"
+        },
+        {
+            "type": "java",
+            "name": "Launch Server",
+            "request": "launch",
+            "mainClass": "Server",
+            "args": "--enable-preview",
+            "projectName": "draft-simulator_f04769cb"
+        }
+    ]
+}
