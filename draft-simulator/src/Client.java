@@ -103,7 +103,7 @@ class Client
 		sendMessage(card.replace("//", "_"));
 		BufferedImage img = null;
 		int count = 0;
-		while(count < 5)
+		while((count < 10) && img == null)
 		{
 			System.out.println("try getting card image");
 			try {img = ImageIO.read(new BufferedInputStream(dataInputStream));}
@@ -111,6 +111,8 @@ class Client
 			{
 				System.out.println("error getting image from server: " + ex);
 			}
+			
+			try{Thread.sleep(20);} catch(InterruptedException ex) {System.out.println("error sleeping thread: " + ex);}
 			count++;
 		}
 		

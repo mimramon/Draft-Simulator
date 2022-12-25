@@ -193,12 +193,9 @@ public class Server
                 for (Player p : players) 
                 {
                     p.ready = false;
-                    try
-                    {
-                        System.out.println("sending get pack");
-                        player.playerClient.OUTPUTSTREAM.writeUTF("get pack");
-                    }
-                    catch(IOException e){System.out.println(e);}
+                    System.out.println("sending get pack");
+                    p.playerClient.sendMessage("get pack");
+                    
                 }
             }
         }

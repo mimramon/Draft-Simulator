@@ -46,7 +46,6 @@ class MenuGui extends JFrame
             		}
             	};
             	t.start();
-                
             }
         });
         panel.add(serverButton);
