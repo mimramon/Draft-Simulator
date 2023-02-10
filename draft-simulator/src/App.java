@@ -3,14 +3,36 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
 
+
 public class App 
 {
+	public static final String APPDIR ="C:\\Users\\" + System.getProperty("user.name") + "\\Desktop\\DraftFiles";
+	public static final String IMGDIR = APPDIR + "\\CardImages";
+	public static final String CUBEDIR = APPDIR + "\\cube.txt";
+	public static final Image ERRORIMG = IMGDIR + "\\errorimg.png";
+	
     public static void main(String[] args)
     {
+    	initialiseFolders();
         new MenuGui();
     }  
-}
 
+
+    public static void initialiseFolders()
+	{
+		File appDir = new File(APPDIR);
+		if (!appDir.exists())
+		{
+	    	appDir.mkdirs();
+		}
+		File imgDir = new File(IMGDIR);
+		if (!imgDir.exists())
+		{
+			imgDir.mkdirs();
+			
+		}
+	}
+}
 class MenuGui extends JFrame
 {
     private JPanel panel;

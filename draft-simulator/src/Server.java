@@ -11,14 +11,10 @@ import javax.swing.JOptionPane;
 public class Server 
 {
     private static final int PORT = 4999;
-    private static final String APPDIR ="C:\\Users\\" + System.getProperty("user.name") + "\\Desktop\\DraftFiles";
-    private static final String IMGDIR = APPDIR + "\\CardImages";
-    private static final String CUBEDIR = APPDIR + "\\cube.txt";
     public Lobby lobbies[] = new Lobby[5];
 
     public Server()
     {
-    	initialiseFolders();
     	//Makes the server socket
     	System.out.println("server start");
     	ServerSocket serverSocket = null;
@@ -72,26 +68,12 @@ public class Server
         }
     }
     
-    public void initialiseFolders()
-    {
-    	File appDir = new File(APPDIR);
-    	if (!appDir.exists())
-    	{
-    	    appDir.mkdirs();
-    	}
-    	File imgDir = new File(IMGDIR);
-    	if (!imgDir.exists())
-    	{
-    	    imgDir.mkdirs();
-    	}
-    }
-    
     public void saveCardImage(String _card)
     {
     	System.out.println("saving " + _card);
     	BufferedImage cardImg = RequestHandler.GetCardImage(_card);
     	String card = _card.replaceAll("//", "_");
-    	File imgFile = new File(IMGDIR + "\\" + card + ".jpg");
+    	File imgFile = new File(App.IMGDIR + "\\" + card + ".jpg");
     	try{ImageIO.write(cardImg, "jpg", imgFile);}
     	catch(IOException ex) {System.out.println("couldnt write image file: " + ex);}
     }
@@ -132,7 +114,7 @@ public class Server
             ArrayList<String> cardList = new ArrayList<String>();
             try 
             {
-                BufferedReader br = new BufferedReader(new FileReader(CUBEDIR));
+                BufferedReader br = new BufferedReader(new FileReader(App.CUBEDIR));
                 String line;
                 //read cards from file to list
                 while ((line = br.readLine()) != null) 
@@ -154,7 +136,7 @@ public class Server
                     {
                     	String currentCard = cardList.get(i);
                     	System.out.println("checking image for: " + currentCard);
-                    	if(!new File(IMGDIR + "\\" + currentCard.replace("//", "_") + ".jpg").exists())
+                    	if(!new File(App.IMGDIR + "\\" + currentCard.replace("//", "_") + ".jpg").exists())
                     	{
                     		saveCardImage(currentCard);
                     	}
@@ -339,7 +321,7 @@ public class Server
                         case "get card":
                         	System.out.println("start sending image: " + SOCKET);
                         	String card = INPUTSTREAM.readUTF();
-                        	File cardFile = new File(IMGDIR + "\\" + card + ".jpg");
+                        	File cardFile = new File(App.IMGDIR + "\\" + card + ".jpg");
                         	System.out.println(cardFile);
                         	BufferedImage cardImg = ImageIO.read(cardFile);
                         	ImageIO.write(cardImg, "png", OUTPUTSTREAM);

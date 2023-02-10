@@ -116,6 +116,11 @@ class Client
 			count++;
 		}
 		
+		if(img == null)
+		{
+			System.out.println("failiure fetching card from server, set card to error image");
+			
+		}
 		
 		System.out.println("got card image from server " + img);
 		waitForProcess = false;
