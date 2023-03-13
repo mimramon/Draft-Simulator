@@ -119,7 +119,7 @@ class Client
 		if(img == null)
 		{
 			System.out.println("failiure fetching card from server, set card to error image");
-			
+			//TODO make the card image into the error image
 		}
 		
 		System.out.println("got card image from server " + img);
