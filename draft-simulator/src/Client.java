@@ -111,8 +111,7 @@ class Client
 			{
 				System.out.println("error getting image from server: " + ex);
 			}
-			
-			try{Thread.sleep(20);} catch(InterruptedException ex) {System.out.println("error sleeping thread: " + ex);}
+			System.out.println("got card data");
 			count++;
 		}
 		
@@ -120,6 +119,7 @@ class Client
 		{
 			System.out.println("failiure fetching card from server, set card to error image");
 			//TODO make the card image into the error image
+			img = App.ERRORIMG;
 		}
 		
 		System.out.println("got card image from server " + img);

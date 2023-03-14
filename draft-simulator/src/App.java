@@ -1,15 +1,19 @@
 import java.awt.*;
+import java.awt.color.ColorSpace;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.io.*;
 
 
 public class App 
 {
-	public static final String APPDIR ="C:\\Users\\" + System.getProperty("user.name") + "\\Desktop\\DraftFiles";
+	public static final String APPDIR =System.getProperty("user.dir") + "\\DraftFiles";
 	public static final String IMGDIR = APPDIR + "\\CardImages";
 	public static final String CUBEDIR = APPDIR + "\\cube.txt";
-	public static final Image ERRORIMG = IMGDIR + "\\errorimg.png";
+	public static final BufferedImage ERRORIMG = new BufferedImage(146, 204, ColorSpace.TYPE_RGB);
 	
     public static void main(String[] args)
     {
