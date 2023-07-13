@@ -18,7 +18,6 @@ class Client
 	public boolean keepAlive;
 	private InetAddress hostIP;
 	private Socket socket;
-	public boolean waitForProcess;
 
 	public Client()
 	{
@@ -35,7 +34,6 @@ class Client
 		    	// obtaining input and out streams
 		    	dataInputStream = new DataInputStream(socket.getInputStream());
 		    	dataOutputStream = new DataOutputStream(socket.getOutputStream());
-		    	waitForProcess = false;
 		    	tryConnect = false;
 		    }
             catch(Exception e)
@@ -54,7 +52,6 @@ class Client
 
 	public ArrayList<String> getPack()
 	{
-		waitForProcess = true;
 		System.out.println("send get pack");
 		sendMessage("get pack");
 		String received = null;
@@ -68,13 +65,11 @@ class Client
 			received = receiveMessage();
 		}
 		System.out.println("pack completed");
-		waitForProcess = false;
 		return pack;
 	} 
 
 	public void joinLobby()
 	{
-		waitForProcess = true;
 		sendMessage("join lobby");
 		System.out.println("client asks to join lobby");
 
@@ -83,75 +78,62 @@ class Client
 		{
 			System.out.println("lobby joined");	
 		}
-		waitForProcess = false;
 	}
 
 	public void sendSelectedCard(String card)
 	{
-		waitForProcess = true;
 		System.out.println("client sends selected card msg");
 		sendMessage("card selected");
 		sendMessage(card);
-		waitForProcess = false;
 	}
 	
 	public BufferedImage getCardImage(String card)
 	{
-		waitForProcess = true;
-		System.out.println("ask server for card image");
+		System.out.println("Requesting card image from server");
 		sendMessage("get card");
 		sendMessage(card.replace("//", "_"));
 		BufferedImage img = null;
+		System.out.println("Try reading card from input stream");
 		int count = 0;
-		while((count < 10) && img == null)
+		while(img == null && count < 10)
 		{
-			System.out.println("try getting card image");
 			try {img = ImageIO.read(new BufferedInputStream(dataInputStream));}
 			catch(IOException ex)
 			{
-				System.out.println("error getting image from server: " + ex);
+				System.out.println("error getting card image from server: " + ex);
 			}
-			System.out.println("got card data");
 			count++;
 		}
-		
 		if(img == null)
 		{
-			System.out.println("failiure fetching card from server, set card to error image");
-			//TODO make the card image into the error image
+			System.out.println("failiure fetching card image from server, set card to error image");
 			img = App.ERRORIMG;
 		}
-		
-		System.out.println("got card image from server " + img);
-		waitForProcess = false;
+		System.out.println("Card image to be used: " + img);
 		return img;
 	}
 	
 	public void sendMessage(String msg)
 	{
-		waitForProcess = true;
-		//boolean msgSent = false;
-		//while(!msgSent)
-		//{
-			try {dataOutputStream.writeUTF(msg);}
-			catch(IOException ex) 
-			{
-				System.out.println("couldn't send message to server: " + ex);
-			}
-		//}
-		waitForProcess = false;
+		try {dataOutputStream.writeUTF(msg);}
+		catch(IOException ex) 
+		{
+			System.out.println("couldn't send message to server: " + ex);
+		}
 	}
 	
 	public String receiveMessage()
 	{
-		waitForProcess = true;
 		String msg = null;
-		try {msg = dataInputStream.readUTF();}
-		catch(IOException ex)
+		while(msg == null)
 		{
-			System.out.println("couldn't receive message from server: " + ex);
+			try {msg = dataInputStream.readUTF();}
+			catch(IOException ex)
+			{
+				System.out.println("couldn't receive message from server: " + ex);
+			}
 		}
-		waitForProcess = false;
+		
 		return msg;
 	}
 }

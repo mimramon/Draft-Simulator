@@ -1,5 +1,3 @@
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
@@ -279,14 +277,16 @@ public class Server
         private final Socket SOCKET;
         private Lobby lobby;
         private Player player;
+        private String latestMessage;
     
         // Constructor
         public ClientHandler(Socket socket, DataInputStream dataInputStream, DataOutputStream dataOutputStream, Server server)
         {
-            this.SERVER = server;
-            this.SOCKET = socket;
-            this.INPUTSTREAM = dataInputStream;
-            this.OUTPUTSTREAM = dataOutputStream;
+            SERVER = server;
+            SOCKET = socket;
+            INPUTSTREAM = dataInputStream;
+            OUTPUTSTREAM = dataOutputStream;
+            latestMessage = null;
         }
     
         @Override
@@ -329,6 +329,9 @@ public class Server
                         	OUTPUTSTREAM.flush();
                         	break;
                             
+                        case "communication error":
+                            sendMessage(latestMessage);
+                            break;
                         default:
                             OUTPUTSTREAM.writeUTF("Invalid input");
                             break;
@@ -401,6 +404,10 @@ public class Server
             ArrayList<String> pack = player.currentPack;
             for(String s : pack)
             {
+                if(s.equals(""))
+                {
+                    break;
+                }
                 sendMessage(s);
             }
             sendMessage("done");
@@ -408,15 +415,12 @@ public class Server
 
         public void sendMessage(String msg)
     	{
-    		//boolean msgSent = false;
-    		//while(!msgSent)
-    		//{
-    			try {OUTPUTSTREAM.writeUTF(msg);}
-    			catch(IOException ex) 
-    			{
-    				System.out.println("couldn't send message to server: " + ex);
-    			}
-    		//}
+    		try {OUTPUTSTREAM.writeUTF(msg);}
+    		catch(IOException ex) 
+    		{
+    			System.out.println("couldn't send message to server: " + ex);
+    		}
+            latestMessage = msg;
     	}
     }
 }

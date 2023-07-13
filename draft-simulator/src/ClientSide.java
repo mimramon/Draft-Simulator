@@ -125,7 +125,6 @@ public class ClientSide
             for(String card : pack)
             {
             	System.out.println("try get " + card);
-            	while (client.waitForProcess) {System.out.println("waiting for a process");}
             	ImageIcon cardImage = new ImageIcon(client.getCardImage(card));
             	System.out.println("got " + card);
             	System.out.println(cardImage);
@@ -143,8 +142,7 @@ public class ClientSide
                         deckPanel.add(selectedCard);
                         packPanel.removeAll();
                         packPanel.revalidate();
-                        repaint();
-                        while(client.waitForProcess) {}    
+                        repaint();   
                         client.sendSelectedCard(card);
                         new MessageWorker().execute();
                     }
@@ -163,22 +161,23 @@ public class ClientSide
         {
             protected Void doInBackground()
             {
-            	String receive = "";
-                do
+            	String receive = client.receiveMessage();
+                System.out.println("receive message: " + receive);
+                if(receive.equals("end draft"))
                 {
-                	while(client.waitForProcess) {}
-                	receive = client.receiveMessage();
-                    System.out.println("receive message: " + receive);
-                    if(receive.equals("end draft"))
-                    {
-                    	endDraft();
-                        break;
-                    }
+                	endDraft();
                 }
-                while(!receive.equals("get pack"));
-                System.out.println("add new pack to grid");
-                while(client.waitForProcess) {}
-                draftGUI.addCardsToGrid(client.getPack());
+                else if(receive.equals("get pack"))
+                {
+                    System.out.println("add new pack to grid");
+                    draftGUI.addCardsToGrid(client.getPack());
+                }
+                else
+                {
+                    System.out.println("Error in communication.");
+                    client.sendMessage("communication error");
+                    doInBackground();
+                }
                 return null;
             }
         }

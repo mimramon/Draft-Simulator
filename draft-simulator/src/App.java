@@ -19,7 +19,6 @@ public class App
         new MenuGui();
     }  
 
-
     public static void initialiseFolders()
 	{
 		File appDir = new File(APPDIR);
@@ -31,10 +30,10 @@ public class App
 		if (!imgDir.exists())
 		{
 			imgDir.mkdirs();
-			
 		}
 	}
 }
+
 class MenuGui extends JFrame
 {
     private JPanel panel;
@@ -43,25 +42,26 @@ class MenuGui extends JFrame
     {
         panel = new JPanel();
         panel.setBackground(Color.blue);
-        JButton clientButton = new JButton("Client");
+        JButton clientButton = new JButton("Join Game");
         clientButton.addActionListener(new ActionListener()
         { 
             @Override
             public void actionPerformed(ActionEvent e) 
             {
+                System.out.println("Proceed to client GUI");
                 try {new ClientSide();} catch (Exception ex) {}
                 dispose();
             }
         });
 
-        JButton serverButton = new JButton("Server");
+        JButton serverButton = new JButton("Host Game");
         serverButton.addActionListener(new ActionListener()
         { 
             @Override
             public void actionPerformed(ActionEvent e) 
             {
                 dispose();
-            	System.out.println("server start button");
+            	System.out.println("Proceed to server");
             	Thread t = new Thread() 
             	{
             		public void run()
@@ -72,13 +72,14 @@ class MenuGui extends JFrame
             	t.start();
             }
         });
+
         panel.add(serverButton);
         panel.add(clientButton);
-        this.add(panel, BorderLayout.CENTER);
-        this.setPreferredSize(new Dimension(320, 180));
-        this.pack();
-        this.setVisible(true);
+        add(panel, BorderLayout.CENTER);
+        setPreferredSize(new Dimension(320, 180));
+        pack();
+        setVisible(true);
         ToolTipManager.sharedInstance().setDismissDelay(Integer.MAX_VALUE);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
