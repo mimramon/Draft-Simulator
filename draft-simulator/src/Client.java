@@ -16,6 +16,7 @@ class Client
 	public DataInputStream dataInputStream;
 	public DataOutputStream dataOutputStream;
 	public boolean keepAlive;
+	public boolean isBusy;
 	private InetAddress hostIP;
 	private Socket socket;
 
@@ -48,10 +49,12 @@ class Client
 		    }
         }
         while(tryConnect);
+		isBusy = false;
 	}
 
 	public ArrayList<String> getPack()
 	{
+		isBusy = true;
 		System.out.println("send get pack");
 		sendMessage("get pack");
 		String received = null;
@@ -65,11 +68,13 @@ class Client
 			received = receiveMessage();
 		}
 		System.out.println("pack completed");
+		isBusy = false;
 		return pack;
 	} 
 
 	public void joinLobby()
 	{
+		isBusy = true;
 		sendMessage("join lobby");
 		System.out.println("client asks to join lobby");
 
@@ -78,17 +83,21 @@ class Client
 		{
 			System.out.println("lobby joined");	
 		}
+		isBusy = false;
 	}
 
 	public void sendSelectedCard(String card)
 	{
+		isBusy = true;
 		System.out.println("client sends selected card msg");
 		sendMessage("card selected");
 		sendMessage(card);
+		isBusy = false;
 	}
 	
 	public BufferedImage getCardImage(String card)
 	{
+		isBusy = true;
 		System.out.println("Requesting card image from server");
 		sendMessage("get card");
 		sendMessage(card.replace("//", "_"));
@@ -110,16 +119,23 @@ class Client
 			img = App.ERRORIMG;
 		}
 		System.out.println("Card image to be used: " + img);
+		isBusy = false;
 		return img;
 	}
 	
 	public void sendMessage(String msg)
 	{
-		try {dataOutputStream.writeUTF(msg);}
+		isBusy = true;
+		try 
+		{
+			dataOutputStream.writeUTF(msg);
+			System.out.println("message sent: " + msg);
+		}
 		catch(IOException ex) 
 		{
 			System.out.println("couldn't send message to server: " + ex);
 		}
+		isBusy = false;
 	}
 	
 	public String receiveMessage()

@@ -97,12 +97,8 @@ public class Server
             setupPacks();
             for (Player p : players) 
             {
-                try
-                {
-                    System.out.println("sending start message");
-                    p.playerClient.OUTPUTSTREAM.writeUTF("start draft");
-                }
-                catch(IOException e){System.out.println("error sending start message: " + e);}
+                System.out.println("sending start message");
+                p.playerClient.sendMessage("start draft");
             }
         }
 
@@ -313,27 +309,15 @@ public class Server
                             break;
 
                         case "card selected":
-                            System.out.println("recieved card selected");
-                            String selectedCard = INPUTSTREAM.readUTF();
-                            lobby.cardSelected(player, selectedCard);
+                            cardSelected();
                             break;
                         
                         case "get card":
-                        	System.out.println("start sending image: " + SOCKET);
-                        	String card = INPUTSTREAM.readUTF();
-                        	File cardFile = new File(App.IMGDIR + "\\" + card + ".jpg");
-                        	System.out.println(cardFile);
-                        	BufferedImage cardImg = ImageIO.read(cardFile);
-                        	ImageIO.write(cardImg, "png", OUTPUTSTREAM);
-                        	System.out.println("finished sending image: " + SOCKET);
-                        	OUTPUTSTREAM.flush();
+                        	getCard();
                         	break;
-                            
-                        case "communication error":
-                            sendMessage(latestMessage);
-                            break;
                         default:
-                            OUTPUTSTREAM.writeUTF("Invalid input");
+                            System.out.println("Error in comminucation sending: " + latestMessage);
+                            sendMessage(latestMessage);
                             break;
                     }
                 } 
@@ -413,9 +397,32 @@ public class Server
             sendMessage("done");
         }
 
+        void cardSelected() throws IOException
+        {
+            System.out.println("recieved card selected");
+            String selectedCard = INPUTSTREAM.readUTF();
+            lobby.cardSelected(player, selectedCard);
+        }
+
+        void getCard() throws IOException
+        {
+            System.out.println("start sending image: " + SOCKET);
+            String card = INPUTSTREAM.readUTF();
+        	File cardFile = new File(App.IMGDIR + "\\" + card + ".jpg");
+            System.out.println(cardFile);
+            BufferedImage cardImg = ImageIO.read(cardFile);
+            ImageIO.write(cardImg, "png", OUTPUTSTREAM);
+            System.out.println("finished sending image: " + SOCKET);
+            OUTPUTSTREAM.flush();
+        }
+
         public void sendMessage(String msg)
     	{
-    		try {OUTPUTSTREAM.writeUTF(msg);}
+    		try 
+            {
+                OUTPUTSTREAM.writeUTF(msg);
+                OUTPUTSTREAM.flush();
+            }
     		catch(IOException ex) 
     		{
     			System.out.println("couldn't send message to server: " + ex);

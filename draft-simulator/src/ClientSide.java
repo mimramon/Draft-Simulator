@@ -18,14 +18,7 @@ public class ClientSide
     {
         //creates client object
         client = new Client();
-
-        if(!client.keepAlive)
-        {
-        	draftGUI.dispose();
-        	menuGUI = new MenuGui();
-        	return;
-        }
-        
+        isClientAlive();
         client.joinLobby();
         System.out.println("waiting for players to join");
         String message;
@@ -35,10 +28,19 @@ public class ClientSide
             System.out.println("received " + message);
         }
         while(!message.equals("start draft"));
-
         //starts the draft
         System.out.println("starting draft");
         draftGUI.addCardsToGrid(client.getPack());
+    }
+
+    public void isClientAlive()
+    {
+        if(!client.keepAlive)
+        {
+        	draftGUI.dispose();
+        	menuGUI = new MenuGui();
+        	return;
+        }
     }
 
     class MenuGui extends JFrame
@@ -143,8 +145,7 @@ public class ClientSide
                         packPanel.removeAll();
                         packPanel.revalidate();
                         repaint();   
-                        client.sendSelectedCard(card);
-                        new MessageWorker().execute();
+                        new MessageWorker(card).execute();
                     }
                 }    
                 );
@@ -159,8 +160,16 @@ public class ClientSide
 
         class MessageWorker extends SwingWorker<Void,Void>
         {
+            private String card;
+
+            MessageWorker(String _card)
+            {
+                card = _card;
+            }
+
             protected Void doInBackground()
             {
+                client.sendSelectedCard(card);
             	String receive = client.receiveMessage();
                 System.out.println("receive message: " + receive);
                 if(receive.equals("end draft"))
